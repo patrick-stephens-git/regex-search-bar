@@ -29,10 +29,16 @@ const navigateEffect = StateEffect.define<number>();
 
 function buildDecorations(matches: MatchRange[], activeIndex: number): DecorationSet {
 	if (!matches.length) return Decoration.none;
-	const marks = matches.map((m, i) =>
-		Decoration.mark({
-			class: i === activeIndex ? "regex-search-match regex-search-match-active" : "regex-search-match",
-		}).range(m.from, m.to)
+	// Zero-length matches (e.g. from ".*") can't be highlighted: CodeMirror throws on
+	// empty mark decorations, which would abort the whole state update.
+	const marks = matches.flatMap((m, i) =>
+		m.from === m.to
+			? []
+			: [
+					Decoration.mark({
+						class: i === activeIndex ? "regex-search-match regex-search-match-active" : "regex-search-match",
+					}).range(m.from, m.to),
+				]
 	);
 	return Decoration.set(marks);
 }

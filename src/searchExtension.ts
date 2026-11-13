@@ -1,4 +1,4 @@
-import { EditorSelection, StateEffect, StateField, type Extension } from "@codemirror/state";
+import { EditorSelection, StateEffect, StateField, type Extension, type Range } from "@codemirror/state";
 import { Decoration, type DecorationSet, EditorView, type Panel, showPanel } from "@codemirror/view";
 import { compileMatcher, findMatches, type MatchRange, type SearchMode } from "./matcher";
 
@@ -31,15 +31,13 @@ function buildDecorations(matches: MatchRange[], activeIndex: number): Decoratio
 	if (!matches.length) return Decoration.none;
 	// Zero-length matches (e.g. from ".*") can't be highlighted: CodeMirror throws on
 	// empty mark decorations, which would abort the whole state update.
-	const marks = matches.flatMap((m, i) =>
-		m.from === m.to
-			? []
-			: [
-					Decoration.mark({
-						class: i === activeIndex ? "regex-search-match regex-search-match-active" : "regex-search-match",
-					}).range(m.from, m.to),
-				]
-	);
+	const marks: Range<Decoration>[] = [];
+	matches.forEach((m, i) => {
+		if (m.from === m.to) return;
+		const cls = i === activeIndex ? "regex-search-match regex-search-match-active" : "regex-search-match";
+		const mark: Decoration = Decoration.mark({ class: cls });
+		marks.push(mark.range(m.from, m.to));
+	});
 	return Decoration.set(marks);
 }
 

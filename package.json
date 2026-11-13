@@ -5,16 +5,23 @@
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
-		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production"
+		"build": "npm run lint && tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
+		"lint": "eslint src"
 	},
 	"license": "MIT",
 	"devDependencies": {
 		"@codemirror/state": "6.5.0",
 		"@codemirror/view": "^6.26.0",
+		"@eslint/js": "^10.0.1",
 		"@types/node": "^20.11.0",
 		"esbuild": "^0.20.0",
+		"eslint": "^10.15.0",
+		"eslint-plugin-obsidianmd": "^0.5.1",
+		"globals": "^17.14.0",
+		"jiti": "^2.7.0",
 		"obsidian": "latest",
 		"tslib": "^2.6.0",
-		"typescript": "^5.4.0"
+		"typescript": "^5.4.0",
+		"typescript-eslint": "^8.72.2"
 	}
 }
